@@ -1,21 +1,33 @@
 import streamlit as st
 from src.components.header import header_home
+from src.components.footer import footer_home
+from src.ui.base_layout import style_base_layout, style_background_home
 
 def home_screen():
-    st.header("Hello i am a HEADER SECTION")
     
     header_home()
 
-    col1, col2 = st.columns(2)
+    # Styling apply
+    style_base_layout()
+    style_background_home()
 
+
+    col1, col2 = st.columns(2, gap="large")
     with col1:
-        if st.button("Go to the Teacher section", key = "teacher"):
+        st.header("I'm Student")
+        st.image("https://i.ibb.co/844D9Lrt/mascot-student.png", width=120)
 
-            st.session_state["login_type"] = "Teacher"
+        if st.button("Student Portal", type="primary", icon=':material/arrow_outward:', icon_position='right'):
+            st.session_state["login_type"] = "Student"
             st.rerun()
 
     with col2:
-        if st.button("Go to the Student section"):
+        st.header("I'm Teacher")
+        st.image("https://i.ibb.co/CsmQQV6X/mascot-prof.png", width=145)
 
-            st.session_state["login_type"] = "Student"
+        if st.button("Teacher Portal", type="primary", icon=':material/arrow_outward:', icon_position='right'):
+            st.session_state["login_type"] = "Teacher"
             st.rerun()
+
+    footer_home()
+
