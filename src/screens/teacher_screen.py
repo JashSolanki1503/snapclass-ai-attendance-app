@@ -33,27 +33,6 @@ def teacher_screen_login():
     st.space()
     st.space()
 
-    # create some input fields
-    st.components.v1.html("""
-    <script>
-    function fixPlaceholders() {
-        const doc = window.parent.document;
-        
-        const style = doc.createElement('style');
-        style.innerHTML = `
-            input::placeholder { color: #000000 !important; opacity: 1 !important; }
-            textarea::placeholder { color: #000000 !important; opacity: 1 !important; }
-        `;
-        doc.head.appendChild(style);
-    }
-
-    fixPlaceholders();
-
-    const observer = new MutationObserver(fixPlaceholders);
-    observer.observe(window.parent.document.body, { childList: true, subtree: true });
-    </script>
-    """, height=0)
-
     teacher_username = st.text_input("Enter username", placeholder="@jashsolanki")
     teacher_pass = st.text_input("Enter password", placeholder="Enter password", type="password")
 
@@ -73,9 +52,6 @@ def teacher_screen_login():
             
 
     footer_dashboard()
-
-
-
 
 
 def teacher_screen_register():
