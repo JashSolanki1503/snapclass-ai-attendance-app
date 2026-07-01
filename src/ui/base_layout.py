@@ -170,7 +170,12 @@ def style_base_layout():
             border-left: none !important;
             outline: none !important;
             box-shadow: none !important;
-        }     
+        }  
+        
+        /* Overwrite only the camera_input content */
+        [data-testid="stCameraInput"] [data-testid="stWidgetLabel"] p {
+            color: #000000 !important;
+        }   
         </style>
 
      """, unsafe_allow_html=True)
