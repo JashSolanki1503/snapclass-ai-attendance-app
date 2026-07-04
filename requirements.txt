@@ -19,6 +19,6 @@ pillow
 
 streamlit 
 
-# for voice recognition 
+# for face and voice recognition 
 librosa
 resemblyzer 

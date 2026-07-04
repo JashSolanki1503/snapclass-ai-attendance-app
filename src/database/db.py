@@ -65,3 +65,17 @@ def get_all_students():
         return response.data
     else:
         return None
+    
+
+# insert all students inside the database 
+def create_student(name, face_embedding = None, voice_embedding = None):
+    
+    # create dictionary of data to better insertion 
+    data = {
+        "name": name,
+        "face_embedding": face_embedding,
+        "voice_embedding": voice_embedding
+    }
+
+    response = supabase.table("students").insert(data).execute()
+    return response.data
