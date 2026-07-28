@@ -1,8 +1,10 @@
 import streamlit as st 
 
-from src.ui.base_layout import style_base_layout, style_background_dashboard
+from src.ui.base_layout import style_base_layout, style_background_dashboard_student
 from src.components.header import header_dashboard
 from src.components.footer import footer_dashboard
+from src.components.dialoge_enroll import enroll_dialog
+from src.components.subject_card import subject_card
 
 # open the image in python interface
 from PIL import Image
@@ -11,18 +13,126 @@ import numpy as np
 from src.pipelines.face_recognition import predict_attendance, get_face_embeddings, train_classifier
 from src.pipelines.voice_recognition import get_voice_embedding
 
-from src.database.db import get_all_students, create_student
+from src.database.db import get_all_students, create_student, enroll_student_to_subject, unenroll_student_to_subject, get_student_attendance, get_student_subjects
 import time  
 
 
 def student_dashboard():
-    st.header("THIS IS THE DASHBAORD")
+    student_data = st.session_state['student_data']
+    student_id = student_data['student_id']
 
+    # Header part 
+    c1, c2 = st.columns(2, vertical_alignment="center", gap="xxlarge")
+    with c1:
+        header_dashboard()
+    with c2:
+        st.subheader(f"Welcome, {student_data['name']}")
+        if st.button("Logout", type = "secondary", shortcut="control+backspace", width="stretch"):
+            st.session_state['is_logged_in'] = False
+            del st.session_state['student_data']
+            st.rerun()
+    
+    st.space()
+
+    tab1, tab2 = st.columns(2)
+    with tab1: 
+        st.header("Your Enrolled Subjects")
+    with tab2:
+        if st.button("Enroll in Subject", type="primary", width="stretch"):
+            enroll_dialog()
+
+    st.divider()
+
+    # now here we show the student enroll all subjects 
+    with st.spinner("Loading your enrolled subjects.."):
+        
+        # Extract the subjects and attendece_log from the db
+        '''
+        Subject Return form : 
+        {
+            "student_id": 5,
+            "subject_id": 1,
+
+            "subjects": {
+                "subject_id": 1,
+                "subject_code": "IT601",
+                "name": "Machine Learning",
+                "section": "A",
+                "teacher_id": 12
+            }
+        }
+        ''' 
+        subjects = get_student_subjects(student_id)
+
+        '''
+        Logs return form : 
+        {
+            "id": 1,
+            "student_id": 5,
+            "subject_id": 1,
+            "is_present": True,
+            "timestamp": "2026-07-01T09:00:00"
+        }
+
+        actually over real sql query to retreive the total class and total student attendence is Case based 
+        but sql support those type of queries but supabase not so thats why we need to run the manual loop to 
+        extract the total class and total attendence of students 
+
+        '''
+        logs = get_student_attendance(student_id)
+
+    stats_map = {}
+    for log in logs:
+        sid = log['subject_id']
+
+        if sid not in stats_map:
+            stats_map[sid] = {
+                'total': 0,
+                'attended': 0
+            }
+
+        stats_map[sid]['total'] += 1
+
+        if log.get('is_present'):
+            stats_map[sid]['attended'] += 1
+
+    
+    # render the student card 
+    cols = st.columns(2)
+
+    for i, sub_node in enumerate(subjects):
+        sub = sub_node['subjects']
+        sid = sub['subject_id']
+
+        # get subject info from the stats_map
+        stats = stats_map.get(sid, {"total": 0, "attended": 0}) 
+
+        def unenroll_button():
+            if st.button("Unenroll from this course", type="tertiary", width="stretch", icon=":material/delete_forever:", key=f"share_{sub['subject_code']}"):
+                unenroll_student_to_subject(student_id, sid)
+                st.toast(f"Unenroll from {sub['name']} sucessfully!")
+                st.rerun()
+
+        # render particular subject side by side 
+        with cols[i%2]:
+            
+            subject_card(
+                name = sub['name'],
+                code = sub['subject_code'],
+                section = sub['section'],
+                stats = [
+                    ('📅', 'Total', stats['total']),
+                    ('✅', 'Attended', stats['attended']),
+                ],
+                footer_callback=unenroll_button
+            )
+
+    footer_dashboard()
 
 def student_screen():
     
     style_base_layout()
-    style_background_dashboard()
+    style_background_dashboard_student()
 
     # student dashboard navigation 
     if "student_data" in st.session_state:

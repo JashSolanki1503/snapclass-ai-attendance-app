@@ -25,16 +25,78 @@ def style_background_home():
     
 
 
-def style_background_dashboard():
+def style_background_dashboard_teacher():
 
     st.markdown("""
   
         <style>
 
-            .stApp {
-                background: #E0E3FF !important;   
-            }    
+        .stApp {
+            background: #E0E3FF !important;   
+        } 
 
+        /* Change the subheader font color white to black */
+        h3 {
+            color: black !important;
+        }      
+
+        </style>
+
+     """, unsafe_allow_html=True)
+    
+
+def style_background_dashboard_student():
+
+    st.markdown("""
+  
+        <style>
+
+        .stApp {
+            background: #E0E3FF !important;   
+        } 
+
+        /* Change the subheader font color white to black */
+        h3 {
+            color: black !important;
+        }   
+                
+        /* Audio traker */
+        /* Content/text color black */
+        [data-testid="stAudioInput"] p {
+            color: #000000 !important;
+        }
+
+        /* Change the background color of the audio taker */      
+        .st-emotion-cache-1uzegzg {
+            background-color: white !important;  
+        }
+        .st-emotion-cache-oj06lr {
+            color: black !important;
+            background-color: white !important;   
+        }
+        /* when we want to see recording so that case also apply same background is white and text color is balck */
+        .st-emotion-cache-nm0s83 { 
+            color: black !important;
+            background-color: white !important;    
+        }
+                
+        /* Target the live wave capture canvas and invert/shift its hue to render Red instead of White */
+        div[data-testid="stAudioInputRecordButton"] canvas {
+            filter: invert(18%) sepia(96%) saturate(6726%) hue-rotate(356deg) brightness(91%) contrast(119%) !important;
+        }   
+    
+        /* target the spinner */
+        /* Change its content color to the black */
+        div[data-testid="stSpinner"] > div {
+            color: black !important;
+        }
+        
+        /* Change loading symbol color defaultly white to the dark blue */
+        /* border-color expect TOP RIGHT BOTTOM LEFT side color */ 
+        .st-emotion-cache-1vycjxg {
+            border-color: #00008B #00008B #00008B transparent !important;
+        }    
+                 
         </style>
 
      """, unsafe_allow_html=True)
@@ -119,7 +181,7 @@ def style_base_layout():
                 
         /* Input box styling changing */
         .stTextInput input {
-            background-color: white !important;
+            background-color: #f5f5f5  !important;
         }
                 
         div[data-baseweb="input"] {
@@ -175,7 +237,57 @@ def style_base_layout():
         /* Overwrite only the camera_input content */
         [data-testid="stCameraInput"] [data-testid="stWidgetLabel"] p {
             color: #000000 !important;
-        }   
+        } 
+
+        /* Change the dialog background-color and content color */
+        /* Dialog background → white */
+        [data-testid="stDialog"] > div > div {
+            background-color: #ffffff !important;
+        }
+
+        /* Dialog title "Create New Subject" → black */
+        /* Button text inside dialog → white */
+        [data-testid="stDialog"] button p {
+            color: #ffffff !important;
+        }
+
+        /* All other text inside dialog → black */
+        [data-testid="stDialog"] p {
+            color: #000000 !important;
+        }
+                
+
+        /* Change the color of st.code black into the white */
+        [data-testid="stCode"] pre {
+            background-color: #f5f5f5 !important;
+            color: #333333 !important;
+        }
+                
+        /* Change the st.selectbox some property */ 
+        /* Chage the selectbox content Label color white to black */
+        .stSelectbox label {
+            color: #000000 !important;
+        }
+                
+        /* Selected option text inside box → black */
+        /* TODO: replace with proper selector, auto-generated class used as last resort */
+        /* This targets selected option text in st.selectbox */
+        .st-dn {
+            color: #000000 !important;
+        }
+
+
+        /* Change the st.file_uplaoder background and content color */
+        /* File uploader background → light gray */
+        # [data-testid="stFileUploader"] section {
+        #     background-color: #f5f5f5 !important;
+        # }
+
+        # /* File uploader text → black */
+        # [data-testid="stFileUploader"] section span {
+        #     color: #000000 !important;
+        # }      
+
         </style>
 
      """, unsafe_allow_html=True)
