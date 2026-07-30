@@ -283,3 +283,8 @@ def insert_attendance_logs(attendance_logs):
 def get_studetns_voice_embeddings():
     response = supabase.table("students").select("student_id, voice_embedding").execute()
     return response.data
+
+def get_teacher_subject_attendance(teacher_id):
+
+    response = supabase.table('attendance_logs').select("*, subjects!inner(*)").eq('subjects.teacher_id', teacher_id).execute()
+    return response.data

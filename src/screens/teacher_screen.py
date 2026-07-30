@@ -13,7 +13,7 @@ from src.components.subject_card import subject_card
 from src.pipelines.face_recognition import predict_attendance
 
 from src.ui.base_layout import style_background_dashboard_teacher, style_base_layout
-from src.database.db import check_teacher_exists, teacher_login, create_teacher, get_teacher_subjects
+from src.database.db import check_teacher_exists, teacher_login, create_teacher, get_teacher_subjects, get_teacher_subject_attendance
 from src.database.config import supabase
 
 import pandas as pd 
@@ -128,14 +128,8 @@ def teacher_tab_take_attendence():
 
     st.header("Take AI Attendance")
 
-    # tab1, tab2 = st.columns([3, 1], vertical_alignment="bottom")
-
-    # with tab1:
+    
     selected_subject_label = st.selectbox("Select Subject", options = list(subject_option.keys())) 
-
-    # with tab2:
-    #     if st.button("Add Photos", type="primary", icon=":material/photo_prints:", width="stretch"):
-    #         add_photos_dialog()
 
     # Extract the student enter subject's id 
     selected_subject_id = subject_option[selected_subject_label]  
@@ -191,9 +185,7 @@ def teacher_tab_take_attendence():
         else:
             voice_attendance_dialog(selected_subject_id)       
 
-# ---------------------------------------------------------------------------------------
-# EXPERIMENTAL PART 
-# ---------------------------------------------------------------------------------------
+
 # if teacher capture any attendance images 
 def process_camera_attendance(selected_subject_id):
     if st.session_state.attendence_images:
@@ -349,7 +341,61 @@ def teacher_tab_manage_subjects():
 
 
 def teacher_tab_attendece_records():
+
     st.header("Attendence Records")
+
+    # Extract the teacher_id 
+    teacher_id = st.session_state.teacher_data['teacher_id']
+
+    records = get_teacher_subject_attendance(teacher_id)
+
+    if not records:
+        st.warning("No attendance records found. Create a subject and take attendance to see records here.")
+        return 
+
+    # clean the data 
+    data = []
+
+    for r in records:
+        timestamp = r.get("timestamp")
+
+        data.append({
+            "ts_group": timestamp.split(".")[0] if timestamp else None,
+
+            # supabase generally stores timestamps in ISO (International Organization for Standardization) format
+            # ISO is just one standard time storing format 
+            # so fromisoformat() with the help of this function we can say datetime to convert ISO format time into the datetime object
+            "Time": datetime.fromisoformat(timestamp).strftime("%Y-%m-%d %I:%M %p") if timestamp else 'N/A',
+
+            "Subject": r['subjects']['name'],
+            "Subject Code": r['subjects']['subject_code'],
+            "is_present": bool(r.get('is_present', False)) 
+        })
+
+    # convert the clean data into the dataframe for the further preprocessing 
+    df = pd.DataFrame(data)
+
+    # create the summary dataframe 
+    summary = (
+        df.groupby(['ts_group', 'Time', 'Subject', 'Subject Code']).agg(
+            Present_Count = ('is_present', 'sum'),
+            Total_Count = ('is_present', 'count')
+        ).reset_index()
+    )
+
+    # Count the present student inside the each teacher subjects
+    # here for the pandas we can't use f-string for this kind of concatenation because in that case python literally user entire pandas dataframe inside one row 
+    summary['Attendance Stats'] = (
+        "✅ " + summary['Present_Count'].astype(str) + " /"
+        + summary['Total_Count'].astype(str) + ' Students'
+    ) 
+
+    df_display = (
+        summary.sort_values(by="ts_group", ignore_index=True, ascending=False)[['Time', 'Subject', 'Subject Code', 'Attendance Stats']]
+    )
+
+    st.dataframe(df_display, width="stretch", hide_index=True)
+
 
 
 # Helper function for the teacher_screen_login
