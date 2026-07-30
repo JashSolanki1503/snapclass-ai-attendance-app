@@ -38,8 +38,41 @@ def style_background_dashboard_teacher():
         /* Change the subheader font color white to black */
         h3 {
             color: black !important;
-        }      
+        } 
 
+        /* target the spinner */
+        /* Change its content color to the black */
+        div[data-testid="stSpinner"] > div {
+            color: black !important;
+        }
+        
+        /* Change loading symbol color defaultly white to the dark blue */
+        /* border-color expect TOP RIGHT BOTTOM LEFT side color */ 
+        .st-emotion-cache-1vycjxg {
+            border-color: #00008B #00008B #00008B transparent !important;
+        }         
+        
+
+        /* Audio traker */
+        /* Content/text color black */
+        [data-testid="stAudioInput"] p {
+            color: #000000 !important;
+        }
+
+        /* Change the background color of the audio taker */      
+        .st-emotion-cache-1uzegzg {
+            background-color: white !important;  
+        }
+        .st-emotion-cache-oj06lr {
+            color: black !important;
+            background-color: white !important;   
+        }
+
+        /* st.image property changing */
+        /* change the caption content color white to black */
+        [data-testid="stImageCaption"] {
+            color: #000000 !important;
+        }
         </style>
 
      """, unsafe_allow_html=True)
@@ -268,6 +301,11 @@ def style_base_layout():
         .stSelectbox label {
             color: #000000 !important;
         }
+
+        # /* Apply select box right most icon white color to black */
+        # .st-c5 {
+        #     fill: rgb(19, 23, 32);
+        # }
                 
         /* Selected option text inside box → black */
         /* TODO: replace with proper selector, auto-generated class used as last resort */

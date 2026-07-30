@@ -1,3 +1,10 @@
+# ISSUES 
+# Supabase not grant the delete request 
+# inside the student_screen toast color is completly white 
+
+
+
+
 import streamlit as st 
 
 from src.screens.home_screen import home_screen

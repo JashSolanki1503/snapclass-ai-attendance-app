@@ -10,6 +10,7 @@ import pandas as pd
 def voice_attendance_dialog(selected_subject_id):
     st.write("Record audio of students saying I am present. Then AI will recognize the students.")
 
+    audio_input = None 
     audio_input = st.audio_input("Record classroom audio")
 
     if st.button("Analyze Audio", type="primary", width="stretch"):
@@ -17,6 +18,12 @@ def voice_attendance_dialog(selected_subject_id):
         with st.spinner("Processing Audio data..."):
 
             try:
+
+                # audio input is None 
+                if audio_input is None:
+                    st.error("Please record classroom audio first.")
+                    return
+                
                 response = supabase.table("subject_students").select("*, students(*)").eq("subject_id", selected_subject_id).execute()
                 enroll_subject_students = response.data
 
@@ -73,6 +80,9 @@ def voice_attendance_dialog(selected_subject_id):
                     pd.DataFrame(students_data),
                     attendace_log
                 )
+
+                # Track to indicate we have the audio
+                st.session_state.is_audio_exist = True
             
             except Exception as e:
                 st.error(f"Unexpected error : {e}!")

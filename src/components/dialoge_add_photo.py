@@ -23,10 +23,14 @@ def add_photos_dialog():
            st.session_state.photo_tab = "upload_photo"
     
     # depending upon the selected tab we are going to chosse action 
+    is_photo_take_or_upload = False
+
     if st.session_state.photo_tab == "camera":
         photo = st.camera_input("Take Snapshot", key="dialog_cam")
 
         if photo:
+            is_photo_take_or_upload = True
+
             # push this photo inside the sesstion_state
             st.session_state.attendence_images.append(Image.open(photo))
 
@@ -40,6 +44,7 @@ def add_photos_dialog():
         uploaded_photos = st.file_uploader('choose image file', type=['jpg', 'png', 'jpeg'], accept_multiple_files=True, key="dialog_upload")
 
         if uploaded_photos:
+            is_photo_take_or_upload = True
 
             # if teacher upload the multiple photos
             for photo in uploaded_photos:
@@ -52,4 +57,9 @@ def add_photos_dialog():
     st.divider()
 
     if st.button("Done", type="primary", width="stretch"):
+
+        if not is_photo_take_or_upload:
+            st.error("Please take / upload photo of classroom first.")
+            return 
+        
         st.rerun()

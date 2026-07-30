@@ -7,6 +7,7 @@ from src.components.dialoge_share_subject import share_subject_dialog
 from src.components.dialoge_add_photo import add_photos_dialog
 from src.components.dialoge_attendance_result import attendance_result_dialog
 from src.components.dialoge_voice_attendance import voice_attendance_dialog
+from src.components.dialoge_voice_attendance_guide import voice_attendance_guide
 from src.components.subject_card import subject_card
 
 from src.pipelines.face_recognition import predict_attendance
@@ -46,7 +47,25 @@ def teacher_dashboard():
         st.subheader(f"Welcome, {teacher_data['name']}")
         if st.button("Logout", type = "secondary", shortcut="control+backspace", width="stretch"):
             st.session_state['is_logged_in'] = False
+            
             del st.session_state['teacher_data']
+
+            # delete some other fields also 
+            if 'attendence_images' in st.session_state:
+                del st.session_state['attendence_images']
+
+            if 'attendance_taken_type' in st.session_state:
+                del st.session_state['attendance_taken_type']
+
+            if 'is_audio_exist' in st.session_state:
+                del st.session_state['is_audio_exist']
+
+            if 'voice_attendance_guide_seen' in st.session_state:
+                del st.session_state['voice_attendance_guide_seen']
+
+            if 'voice_attendance_results' in st.session_state:
+                del st.session_state['voice_attendance_results']
+
             st.rerun()
     
     st.space()
@@ -109,24 +128,74 @@ def teacher_tab_take_attendence():
 
     st.header("Take AI Attendance")
 
-    tab1, tab2 = st.columns([3, 1], vertical_alignment="bottom")
+    # tab1, tab2 = st.columns([3, 1], vertical_alignment="bottom")
 
-    with tab1:
-        selected_subject_label = st.selectbox("Select Subject", options = list(subject_option.keys())) 
+    # with tab1:
+    selected_subject_label = st.selectbox("Select Subject", options = list(subject_option.keys())) 
 
-    with tab2:
-        if st.button("Add Photos", type="primary", icon=":material/photo_prints:", width="stretch"):
-            add_photos_dialog()
+    # with tab2:
+    #     if st.button("Add Photos", type="primary", icon=":material/photo_prints:", width="stretch"):
+    #         add_photos_dialog()
 
     # Extract the student enter subject's id 
     selected_subject_id = subject_option[selected_subject_label]  
 
     st.divider()
 
-    # ---------------------------------------------------------------------------------------
-    # EXPERIMENTAL PART 
-    # ---------------------------------------------------------------------------------------
-    # if teacher capture any attendance images 
+    if "attendance_taken_type" not in st.session_state: 
+        st.session_state.attendance_taken_type = None 
+
+    btn1, btn2 = st.columns(2)
+    with btn1:
+        btn_type = "secondary" if st.session_state.attendance_taken_type == "camera" else "tertiary"
+        if st.button("Take Attendance via Camera", type=btn_type, width="stretch", icon=":material/photo_prints:", key=f"{btn_type} - Type"):
+            st.session_state.attendance_taken_type = "camera" 
+            st.rerun()
+
+    with btn2: 
+        btn_type = "secondary" if st.session_state.attendance_taken_type == "voice" else "tertiary"
+        if st.button("Take Attendance via Audio", type=btn_type, width="stretch", icon=":material/mic:"):
+            st.session_state.attendance_taken_type = "voice" 
+            st.rerun()
+
+
+    # button wise logic settings
+    # camera based attendance taking 
+    if st.session_state.attendance_taken_type == "camera":
+
+        # First open the camera taken dialog
+        if not st.session_state.attendence_images:
+            add_photos_dialog()
+
+        # process and take attendance 
+        process_camera_attendance(selected_subject_id)
+
+    # voice based attendance taking 
+    if st.session_state.attendance_taken_type == "voice":
+
+        # To show the first time message if user haven't upload audio yet 
+        if "is_audio_exist" not in st.session_state:
+
+            st.session_state.is_audio_exist = False 
+
+        if not st.session_state.is_audio_exist:
+            st.info("Please record classroom audio first.")
+
+
+        # Guide implementation 
+        if "voice_attendance_guide_seen" not in st.session_state:
+            st.session_state.voice_attendance_guide_seen = True 
+
+        if st.session_state.voice_attendance_guide_seen:
+            voice_attendance_guide()
+        else:
+            voice_attendance_dialog(selected_subject_id)       
+
+# ---------------------------------------------------------------------------------------
+# EXPERIMENTAL PART 
+# ---------------------------------------------------------------------------------------
+# if teacher capture any attendance images 
+def process_camera_attendance(selected_subject_id):
     if st.session_state.attendence_images:
 
         # display all those images in 4 x 4 Grid format
@@ -140,7 +209,7 @@ def teacher_tab_take_attendence():
 
 
         # Create three buttons 
-        btn1, btn2 = st.columns(2)
+        btn1, btn2, btn3 = st.columns(3)
         has_photos = bool(st.session_state.attendence_images)
 
         # clear all photos button
@@ -210,16 +279,20 @@ def teacher_tab_take_attendence():
 
                         attendance_result_dialog(pd.DataFrame(students_data), attendace_log)
 
+        with btn3:
+            if st.button("Add Photo", type="primary", icon=":material/add_photo_alternate:", width="stretch"):
+                add_photos_dialog()
+
         # with btn3:
         #     if st.button("Use Voice Attendance", type="primary", icon=":material/mic:", width="stretch"):
         #         voice_attendance_dialog()
 
     else:
-        st.info("Please Capture first images of Class.")
+        st.info("Please capture classroom images first.")
 
 
-    if st.button("Use Voice Attendance", type="primary", icon=":material/mic:", width="stretch"):
-        voice_attendance_dialog(selected_subject_id)
+    # if st.button("Use Voice Attendance", type="primary", icon=":material/mic:", width="stretch"):
+    #     voice_attendance_dialog(selected_subject_id)
             
 
 

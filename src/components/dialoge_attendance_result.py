@@ -15,15 +15,18 @@ def show_attendance_results(df, attendance_logs):
         if st.button("Discard", type="secondary", width="stretch"):
             st.session_state.attendence_images = []
             st.session_state.voice_attendance_results = None 
+            st.session_state.is_audio_exist = False
             st.rerun()
+            
 
     with btn2:
         if st.button("Confirm & Save", type="primary", width="stretch"):
             try:
                 insert_attendance_logs(attendance_logs)
                 st.toast("Attendance taken.")
-                st.session_state.attendance_images = []
+                st.session_state.attendence_images = []
                 st.session_state.voice_attendance_results = None
+                st.session_state.is_audio_exist = False
                 st.rerun()
 
             except Exception as e:
