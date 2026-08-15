@@ -59,20 +59,20 @@ def style_background_dashboard_teacher():
             color: #000000 !important;
         }
 
-        /* Change the background color of the audio taker */      
-        .st-emotion-cache-1uzegzg {
-            background-color: white !important;  
-        }
-        .st-emotion-cache-oj06lr {
-            color: black !important;
-            background-color: white !important;   
-        }
+        # /* Change the background color of the audio taker */      
+        # .st-emotion-cache-1uzegzg {
+        #     background-color: white !important;  
+        # }
+        # .st-emotion-cache-oj06lr {
+        #     color: black !important;
+        #     background-color: white !important;   
+        # }
 
-        /* st.image property changing */
-        /* change the caption content color white to black */
-        [data-testid="stImageCaption"] {
-            color: #000000 !important;
-        }
+        # /* st.image property changing */
+        # /* change the caption content color white to black */
+        # [data-testid="stImageCaption"] {
+        #     color: #000000 !important;
+        # }
         </style>
 
      """, unsafe_allow_html=True)
@@ -94,9 +94,9 @@ def style_background_dashboard_student():
         } 
 
         /* Toast background */
-        [data-testid="stToast"] {
-            background-color: #000000 !important;
-        }
+        # [data-testid="stToast"] {
+        #     background-color: #000000 !important;
+        # }
   
                 
         /* Audio traker */

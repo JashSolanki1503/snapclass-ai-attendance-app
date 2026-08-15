@@ -244,7 +244,7 @@ def unenroll_student_to_subject(student_id, subject_id):
     }
     
     # DELETE FROM subject_students WHERE student_id = 'student_id_value' AND subject_id = 'subject_id_value';
-    response = supabase.table("subject_students").delete().eq("student_id", student_id).eq("subject_id", subject_id).execute()
+    response = supabase.table("subject_students").delete().eq("student_id", student_id).eq("subject_id", subject_id).select().execute()
 
     return response.data
 
@@ -288,3 +288,10 @@ def get_teacher_subject_attendance(teacher_id):
 
     response = supabase.table('attendance_logs').select("*, subjects!inner(*)").eq('subjects.teacher_id', teacher_id).execute()
     return response.data
+
+# DELETE FROM subjects WHERE subject_id = given_subject_id;
+def delete_subject(subject_id):
+
+    response = supabase.table("subjects").delete().eq("subject_id", subject_id).select().execute()
+
+    return response 

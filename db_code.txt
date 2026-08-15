@@ -37,3 +37,9 @@ CREATE TABLE attendance_logs (
   student_id BIGINT REFERENCES students(student_id) ON DELETE CASCADE,
   is_present BOOL DEFAULT true
 );
+
+
+
+# Grant deletition also 
+GRANT DELETE ON public.subject_students TO anon;
+GRANT DELETE ON public.subjects TO anon;

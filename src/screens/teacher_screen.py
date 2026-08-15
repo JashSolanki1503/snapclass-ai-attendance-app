@@ -8,12 +8,14 @@ from src.components.dialoge_add_photo import add_photos_dialog
 from src.components.dialoge_attendance_result import attendance_result_dialog
 from src.components.dialoge_voice_attendance import voice_attendance_dialog
 from src.components.dialoge_voice_attendance_guide import voice_attendance_guide
+from src.components.dialoge_delete_subject import delete_subject_dialog
 from src.components.subject_card import subject_card
 
 from src.pipelines.face_recognition import predict_attendance
 
 from src.ui.base_layout import style_background_dashboard_teacher, style_base_layout
 from src.database.db import check_teacher_exists, teacher_login, create_teacher, get_teacher_subjects, get_teacher_subject_attendance
+
 from src.database.config import supabase
 
 import pandas as pd 
@@ -275,18 +277,8 @@ def process_camera_attendance(selected_subject_id):
             if st.button("Add Photo", type="primary", icon=":material/add_photo_alternate:", width="stretch"):
                 add_photos_dialog()
 
-        # with btn3:
-        #     if st.button("Use Voice Attendance", type="primary", icon=":material/mic:", width="stretch"):
-        #         voice_attendance_dialog()
-
     else:
         st.info("Please capture classroom images first.")
-
-
-    # if st.button("Use Voice Attendance", type="primary", icon=":material/mic:", width="stretch"):
-    #     voice_attendance_dialog(selected_subject_id)
-            
-
 
 
 def teacher_tab_manage_subjects():
@@ -319,10 +311,19 @@ def teacher_tab_manage_subjects():
             # Now here for each subjects we create the share link button 
             # if multiple buttons exist so that case we have to give unique ids to each buttons
             def share_btn():
-                if st.button(f"Share Code: {sub['name']}", key=f"share_{sub['subject_code']}", icon=":material/share:"):
 
-                    # QR - Code share feature function 
-                    share_subject_dialog(sub['name'], sub['subject_code'])
+                btn1, btn2 = st.columns(2)
+                with btn1:
+                    if st.button(f"Share Code: {sub['name']}", key=f"share_{sub['subject_code']}", icon=":material/share:", type="primary", width="stretch"):
+
+                        # QR - Code share feature function 
+                        share_subject_dialog(sub['name'], sub['subject_code'])
+
+                with btn2:
+
+                    # button for deleting the subject
+                    if st.button(f"Remove {sub['name']}", key=f"remove_{sub['subject_code']}", icon=":material/delete_forever:", width="stretch"):
+                        delete_subject_dialog(sub['subject_id'], sub['name'])
 
                 st.space()
 
