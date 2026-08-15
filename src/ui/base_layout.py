@@ -91,7 +91,13 @@ def style_background_dashboard_student():
         /* Change the subheader font color white to black */
         h3 {
             color: black !important;
-        }   
+        } 
+
+        /* Toast background */
+        [data-testid="stToast"] {
+            background-color: #000000 !important;
+        }
+  
                 
         /* Audio traker */
         /* Content/text color black */
@@ -324,7 +330,38 @@ def style_base_layout():
         # /* File uploader text → black */
         # [data-testid="stFileUploader"] section span {
         #     color: #000000 !important;
-        # }      
+        # }  
+
+        /* Consistant the all warning buttons like st.warning st.info etc content color */
+        /* st.error → darker red */
+        [data-testid="stAlert"][kind="error"] {
+            background-color: #f5c6cb !important;
+            border-color: #c0392b !important;
+        }    
+
+        /* st.warning → darker yellow */
+        [data-testid="stAlert"][kind="warning"] {
+            background-color: #ffeaa0 !important;
+            border-color: #d68910 !important;
+        }
+
+        /* st.success → darker green */
+        [data-testid="stAlert"][kind="success"] {
+            background-color: #a9dfbf !important;
+            border-color: #1e8449 !important;
+        }
+
+        /* st.info → darker blue */
+        [data-testid="stAlert"][kind="info"] {
+            background-color: #aed6f1 !important;
+            border-color: #1a5276 !important;
+        }
+
+        /* Fix content color back to default for all alerts — removes black bug */
+        [data-testid="stAlert"] p {
+            color: inherit !important;
+        }
+
 
         </style>
 

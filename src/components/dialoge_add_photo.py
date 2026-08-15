@@ -16,11 +16,13 @@ def add_photos_dialog():
         button_type = "primary" if st.session_state.photo_tab == "camera" else "tertiary"
         if st.button("Camera", type=button_type, width="stretch", icon=":material/add_a_photo:"):
             st.session_state.photo_tab = "camera"
+            st.rerun()
             
     with tab2:
         button_type = "primary" if st.session_state.photo_tab == "upload_photo" else "tertiary"
         if st.button("Upload photos", type=button_type, width="stretch", icon=":material/image_inset:"):
            st.session_state.photo_tab = "upload_photo"
+           st.rerun()
     
     # depending upon the selected tab we are going to chosse action 
     is_photo_take_or_upload = False
