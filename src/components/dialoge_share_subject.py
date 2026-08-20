@@ -8,7 +8,7 @@ import segno
 def share_subject_dialog(subject_name, subject_code):
     
     # Define the app domain
-    app_domain = "http://localhost:8501"
+    app_domain = "https://snapclass-ai-attendance-app-4gw6keezdpnv5fkbsyva5m.streamlit.app"
 
     # we add this query-string parameter so that case when user login we easily nevigate it into the correct subject
     join_url = f"{app_domain}/?join-code={subject_code}"
